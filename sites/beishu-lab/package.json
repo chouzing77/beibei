@@ -1,0 +1,9 @@
+{
+  "name": "beibei",
+  "private": true,
+  "version": "1.0.0",
+  "packageManager": "pnpm@11.25.0",
+  "scripts": { "test": "node --test --test-concurrency=1 tests/*.test.cjs" },
+  "engines": { "node": ">=22" },
+  "devDependencies": { "jsdom": "30.1.3", "fake-indexeddb": "6.2.6" }
+}

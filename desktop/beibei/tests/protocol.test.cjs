@@ -1,0 +1,6 @@
+const {test}=require('node:test'),assert=require('node:assert/strict'),path=require('node:path'),fs=require('node:fs');
+const {resolveResource}=require('../protocol.cjs');const root=path.resolve(__dirname,'../web');
+test('内置首页与所有脚本存在',()=>{const {file,type}=resolveResource('beibei://app/',root);assert(type.startsWith('text/html'));const html=fs.readFileSync(file,'utf8');for(const match of html.matchAll(/(?:src|href)="([^"]+)"/g)){if(match[1].startsWith('#'))continue;assert(fs.existsSync(resolveResource('beibei://app/'+match[1],root).file),match[1]);}});
+test('模板下载具有正确类型',()=>{assert.equal(resolveResource('beibei://app/templates/cards.xlsx',root).type,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');});
+test('非本地来源与编码路径不能读取外部文件',()=>{for(const url of ['https://example.com/','beibei://evil/index.html','beibei://app/%2e%2e%2fpackage.json','beibei://app/%5c..%5cpackage.json','beibei://app/%00'])assert.throws(()=>resolveResource(url,root),url);});
+test('桌面前端与已测试的网页源文件一致',()=>{const source=path.resolve(__dirname,'../../../sites/beishu-lab/dist');for(const file of ['index.html','app-v3.js','answer-images.js','styles.css','overrides.css','studio.css','study-core.js','study-ui.js','study.css'])assert(fs.readFileSync(path.join(root,file)).equals(fs.readFileSync(path.join(source,file))),file);});

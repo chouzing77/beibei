@@ -1,0 +1,13 @@
+const fs=require('node:fs');
+const path=require('node:path');
+const XLSX=require('../vendor/xlsx.full.min.js');
+const dir=path.join(__dirname,'../templates');fs.mkdirSync(dir,{recursive:true});
+const rows=[['问题','答案'],['什么是担保物权？','为了担保债权的实现而设定的物权。'],['背书的两个环节是什么？','理解与重复。']];
+const workbook=XLSX.utils.book_new(),sheet=XLSX.utils.aoa_to_sheet(rows);
+sheet['!cols']=[{wch:36},{wch:70}];
+XLSX.utils.book_append_sheet(workbook,sheet,'卡片');
+fs.writeFileSync(path.join(dir,'cards.xlsx'),Buffer.from(XLSX.write(workbook,{type:'array',bookType:'xlsx'})));
+fs.writeFileSync(path.join(dir,'cards.txt'),'\uFEFF#separator:Tab\n'+rows.map(row=>row.join('\t')).join('\n'),'utf8');
+fs.writeFileSync(path.join(dir,'cards.tsv'),'\uFEFF'+rows.map(row=>row.join('\t')).join('\n'),'utf8');
+fs.writeFileSync(path.join(dir,'cards.csv'),'\uFEFF'+rows.map(row=>row.map(cell=>'"'+cell.replaceAll('"','""')+'"').join(',')).join('\r\n'),'utf8');
+fs.writeFileSync(path.join(dir,'cards.json'),JSON.stringify(rows.slice(1).map(([question,answer])=>({question,answer})),null,2),'utf8');

@@ -1,0 +1,6 @@
+toolchain/
+build/
+release/
+assets/
+signing/
+*.local.ps1

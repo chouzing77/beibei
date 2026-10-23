@@ -1,0 +1,15 @@
+**/node_modules/
+**/toolchain/
+**/build/
+**/release/
+**/signing/
+**/.openai/
+**/.env
+**/.env.*
+**/*.jks
+**/*.keystore
+**/*.apk
+**/*.exe
+**/test-results/
+*.local.ps1
+.DS_Store
