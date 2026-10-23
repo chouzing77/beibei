@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f7f6f2"><title>背背</title>
+  <meta name="description" content="理解，再重复。">
+  <link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="overrides.css"><link rel="stylesheet" href="studio.css"><link rel="stylesheet" href="study.css"><script src="vendor/xlsx.full.min.js" defer></script><script src="answer-images.js" defer></script><script src="study-core.js" defer></script><script src="app-v3.js" defer></script><script src="study-ui.js" defer></script>
+  <link rel="stylesheet" href="mobile.css"><script src="platform-files.js" defer></script><script src="backup.js" defer></script><script src="mobile.js" defer></script>
+</head>
+<body class="directory-mode">
+  <div class="app-shell">
+    <aside class="rail">
+      <button class="brand" id="brand-home" type="button"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>背背</button>
+      <nav class="steps" aria-label="背书阶段">
+        <button class="step" data-view="folders" type="button"><span class="step-no">←</span>文件夹</button>
+        <button class="step" data-view="understand" type="button"><span class="step-no">01</span>理解</button>
+        <button class="step" data-view="review" type="button"><span class="step-no">02</span>复习<span id="due-dot" class="due-dot" hidden></span></button>
+      </nav>
+      <div class="rail-bottom"><button class="text-button" data-view="stats" type="button">统计</button><button class="text-button" data-view="focus" type="button">专注</button></div>
+    </aside>
+    <main class="workspace">
+      <header class="topbar">
+        <div class="deck-select-wrap"><label class="sr-only" for="deck-select">选择卡片</label><select id="deck-select"></select><span aria-hidden="true">⌄</span></div>
+        <div class="top-actions"><span id="saved-state" role="status" aria-live="polite"></span><button id="new-deck" class="small-button" type="button">＋ 新卡片</button></div>
+      </header>
+      <section id="view-folders" class="view active">
+        <div class="directory-header"><button id="directory-brand" class="directory-brand" type="button">背背</button><nav aria-label="学习工具"><button class="text-button" data-view="stats" type="button">统计</button><button class="text-button" data-view="focus" type="button">专注</button></nav></div>
+        <div class="view-heading"><h1 id="folder-title">文件夹</h1><button id="new-folder" class="small-button" type="button">＋ 新建文件夹</button></div>
+        <div id="folder-list" class="folder-list"></div>
+        <div id="folder-detail" hidden>
+          <div class="folder-detail-bar"><button id="back-folders" class="text-button" type="button">← 全部文件夹</button><div><button id="import-open" class="small-button" type="button">导入</button><button id="folder-new-deck" class="small-button" type="button">＋ 新卡片</button></div></div>
+          <div id="folder-decks" class="folder-decks"></div>
+        </div>
+        <div id="import-panel" class="panel import-panel" hidden>
+          <div class="panel-top"><span class="panel-label">导入卡片</span><button id="import-close" class="quiet-button" type="button">关闭</button></div>
+          <div class="import-body"><div class="template-links"><span>下载模板</span><a href="templates/cards.xlsx" download>Excel</a><a href="templates/cards.txt" download>TXT</a><a href="templates/cards.csv" download>CSV</a><a href="templates/cards.tsv" download>TSV</a><a href="templates/cards.json" download>JSON</a></div><details class="import-help"><summary>格式要求</summary><p>Excel（.xlsx / .xls）：A 列问题，B 列答案，一行一张卡。首行可填“问题 / 答案”。多工作表可选择导入。</p><p>TXT / TSV：问题与答案用一个 Tab 分隔，一行一张卡，保存为 UTF-8。CSV 使用同样两列；内容有逗号或换行时用双引号包裹。</p><p>JSON：按模板填写 question 和 answer；folder 可选。空问题或空答案的行不导入，相同卡片自动跳过。</p></details><input id="import-file" type="file" accept=".xlsx,.xls,.txt,.csv,.tsv,.json"><label id="import-sheet-wrap" hidden>工作表 <select id="import-sheet"></select></label><div class="import-grid"><label>问题（正面）<select id="import-front"></select></label><label>答案（背面）<select id="import-back"></select></label><label>文件夹列<select id="import-folder-column"></select></label></div><div id="import-preview" class="import-preview"></div><div class="import-actions"><span id="import-count" class="muted-meta"></span><button id="import-confirm" class="button button-dark" type="button" disabled>导入 ↗</button></div></div>
+        </div>
+      </section>
+      <section id="view-understand" class="view">
+        <div class="view-heading"><div><span class="eyebrow">01 / 02</span><h1>理解</h1></div><span id="stage-name" class="stage-name">原文</span></div>
+        <div id="understand-source" class="understand-stage">
+          <div class="source-panel panel">
+            <div class="panel-top"><span class="panel-label">原文</span><div class="panel-tools"><span id="source-count" class="muted-meta"></span><button id="paint-mode-toggle" class="quiet-button" type="button">画笔</button><button id="edit-source" class="quiet-button" type="button">编辑</button></div></div>
+            <div id="annotated-text" class="annotated-text" aria-label="原文结构"></div>
+            <div id="source-answer-images" class="answer-images source-answer-images"></div>
+            <div id="paint-panel" class="paint-panel" hidden><div class="paint-tools"><span>选中语群</span><div id="paint-colors" class="paint-colors"></div></div><div id="paint-surface" class="annotated-text paint-surface"></div></div>
+            <div id="semantic-bricks" class="semantic-bricks" aria-label="语群积木"></div>
+            <div id="source-editor" class="source-editor" hidden>
+              <label class="source-title-label" for="source-title">问题</label><input id="source-title" class="source-title-input" placeholder="卡片正面的问题">
+              <label class="sr-only" for="source-text">原文</label><textarea id="source-text" spellcheck="false" placeholder="粘贴要背的文字"></textarea>
+              <div class="answer-upload"><label class="small-button" for="answer-image-file">＋ 上传答案图片</label><input id="answer-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple hidden><span id="image-upload-status" role="status"></span><div id="answer-image-drafts" class="answer-images"></div></div>
+              <div class="source-editor-actions"><button id="save-source-only" class="small-button" type="button">保存卡片</button><button id="confirm-source" class="button button-dark" type="button">保存并理解 ↗</button></div>
+              <details class="source-advanced"><summary>手动编辑积木</summary>
+              <div class="source-editor-actions"><button id="split-text" class="button button-dark" type="button">拆解原文 ↗</button></div>
+              <div class="section-cap"><span>结构</span><span id="block-count">0 块</span></div>
+              <div id="blocks-editor" class="blocks-editor"></div>
+              <div class="editor-bottom"><button id="add-block" class="text-button" type="button">＋ 添加一块</button><button id="save-blocks" class="button button-accent" type="button">完成 ↗</button></div>
+              </details>
+            </div>
+            <div id="source-actions" class="source-bottom">
+              <div class="stage-options" aria-label="理解环节"><label><input id="include-first" type="checkbox" checked>一阶</label><label><input id="include-second" type="checkbox" checked>二阶</label></div>
+              <button id="start-understanding" class="button button-dark" type="button">开始理解 ↗</button>
+            </div>
+          </div>
+        </div>
+        <div id="understand-first" class="understand-stage" hidden>
+          <div class="subhead"><button class="text-button" data-stage="source" type="button">← 原文</button><span id="first-progress" class="progress-chip"></span></div>
+          <div class="canvas-tools"><span>选中积木</span><button class="shape-button active" data-shape="rect" type="button">▭</button><button class="shape-button" data-shape="ellipse" type="button">⬭</button><button class="shape-button" data-shape="circle" type="button">○</button><button class="shape-button" data-shape="triangle" type="button">△</button><button id="arrow-mode" class="small-button" type="button">↗ 连线</button><button id="clear-arrows" class="quiet-button" type="button">清除连线</button></div>
+          <div class="canvas-scroll"><div id="first-cards" class="concept-canvas"></div></div>
+          <div class="stage-footer"><span>一阶 · 看线索回忆内容</span><button id="first-next" class="button button-dark" type="button">继续 ↗</button></div>
+        </div>
+        <div id="understand-second" class="understand-stage" hidden>
+          <div class="subhead"><button class="text-button" data-stage="source" type="button">← 原文</button><span id="second-progress" class="progress-chip"></span></div>
+          <div class="canvas-scroll"><div id="second-cards" class="concept-canvas" aria-label="二阶积木"></div></div>
+          <div class="stage-footer"><span>二阶 · 不看线索回忆整体</span><button data-view="review" class="button button-accent" type="button">进入复习 ↗</button></div>
+        </div>
+      </section>
+      <section id="view-review" class="view">
+        <div class="view-heading"><div><span class="eyebrow">02 / 02</span><h1>复习</h1></div><span id="due-count" class="progress-chip"></span></div>
+        <div class="simple-review panel">
+          <div class="panel-top"><span id="review-side-label" class="panel-label">正面</span><span id="review-due" class="muted-meta"></span></div>
+          <button id="review-card" class="review-flashcard" type="button" aria-label="翻开卡片"><span id="review-card-content"></span><small id="review-flip-hint">点击翻面 ↗</small></button>
+          <div id="rating-actions" class="rating-actions" hidden><button class="rating rating-hard" data-rating="hard" type="button"><b>不认识</b><small>60 分钟</small></button><button class="rating rating-good" data-rating="good" type="button"><b>一般</b><small>明天</small></button><button class="rating rating-easy" data-rating="easy" type="button"><b>熟悉</b><small>延长间隔</small></button></div>
+          <div id="review-finished" class="review-finished" hidden><strong>本轮完成</strong><button id="review-restart" class="small-button" type="button">再看一轮</button></div>
+          <div id="review-navigation" class="review-navigation"><button id="review-prev" class="quiet-button" type="button">← 上一张</button><span id="review-position"></span><button id="review-next" class="quiet-button" type="button">下一张 →</button></div>
+        </div>
+      </section>
+      <section id="view-stats" class="view">
+        <div class="view-heading"><h1>统计</h1><div class="stats-filters"><label>年<select id="stats-year"></select></label><label>月<select id="stats-month"><option value="0">全年</option></select></label></div></div>
+        <div id="stats-totals" class="stats-totals"></div>
+        <div class="study-panel"><div class="study-panel-heading"><h2>背书热度</h2><label class="metric-picker">热度<select id="heat-metric"><option value="reviews">复习次数</option><option value="focusMs">专注时长</option></select></label></div><div id="heatmap" class="heatmap" aria-label="每日背书热度"></div><div class="heat-footer"><span id="heat-detail" role="status"></span><div id="heat-legend" class="heat-legend"></div></div></div>
+        <div class="stats-charts"><div class="study-panel"><h2>每日活跃 <small>复习次数</small></h2><div id="activity-chart"></div></div><div class="study-panel"><h2>专注时长 <small>分钟 / 日</small></h2><div id="focus-chart"></div></div></div>
+        <details class="stats-data"><summary>每日记录</summary><div class="data-scroll"><table><thead><tr><th>日期</th><th>复习次数</th><th>专注时长</th><th>完成番茄钟</th></tr></thead><tbody id="stats-rows"></tbody></table></div></details>
+      </section>
+      <section id="view-focus" class="view">
+        <div class="view-heading"><h1>专注</h1><button class="text-button" data-view="stats" type="button">查看记录 ↗</button></div>
+        <div class="focus-panel study-panel"><span class="eyebrow">番茄钟</span><div id="focus-ring" class="focus-ring"><div><span id="focus-clock" role="timer" aria-label="剩余时间">25:00</span><span id="focus-status" role="status">准备开始</span></div></div>
+          <div class="focus-settings"><label for="focus-minutes">专注时间</label><input id="focus-minutes" type="number" min="1" max="180" step="1" value="25"><span>分钟</span></div><div class="focus-presets"><button class="small-button" data-minutes="25" type="button">25 分钟</button><button class="small-button" data-minutes="45" type="button">45 分钟</button><button class="small-button" data-minutes="60" type="button">60 分钟</button></div>
+          <p id="focus-error" role="alert"></p><div class="focus-actions"><button id="focus-toggle" class="button button-dark" type="button">开始专注</button><button id="focus-reset" class="small-button" type="button" disabled>结束本次</button></div><p id="focus-today" class="focus-today"></p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <button id="focus-badge" data-view="focus" class="focus-badge" type="button" hidden></button>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="delete-card-dialog" class="properties-dialog" aria-labelledby="delete-card-title"><h2 id="delete-card-title">删除这张卡片？</h2><p id="delete-card-name"></p><div class="dialog-actions"><button id="delete-card-cancel" class="small-button" type="button" autofocus>取消</button><button id="delete-card-confirm" class="button button-danger" type="button">删除</button></div></dialog>
+  <dialog id="folder-properties" class="properties-dialog" aria-labelledby="folder-properties-title">
+    <form id="folder-properties-form">
+      <div class="dialog-heading"><h2 id="folder-properties-title">文件夹属性</h2><button id="folder-properties-close" type="button" class="quiet-button" aria-label="关闭">×</button></div>
+      <label>名称<input id="folder-name" required maxlength="80" autocomplete="off"></label>
+      <fieldset><legend>颜色</legend><div id="folder-color-options" class="paint-colors"></div></fieldset>
+      <label>备注<textarea id="folder-description" rows="2" maxlength="300" placeholder="选填"></textarea></label>
+      <p id="folder-properties-error" role="alert"></p>
+      <div class="dialog-actions"><button id="folder-properties-cancel" type="button" class="small-button">取消</button><button type="submit" class="button button-dark">保存</button></div>
+    </form>
+  </dialog>
+  <div id="connection-menu" class="connection-menu" hidden><button id="connection-delete" type="button">删除连线</button></div>
+</body>
+</html>
