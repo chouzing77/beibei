@@ -2,7 +2,7 @@
 
 **背书 = 理解 + 重复。** 用彩色划线拆出意群，把概念搭成积木关系图，再通过翻卡与间隔复习主动回忆。
 
-- [在线使用](https://beishu-blocks.zhangzhuoqun70.chatgpt.site/)
+- [在线使用](https://chouzing77.github.io/beibei/)
 - [Android 试用包与发布记录](https://github.com/chouzing77/beibei/releases)
 
 ## 功能
@@ -25,6 +25,8 @@ python -m http.server 8000
 ```
 
 打开 http://localhost:8000 。无需前端构建。部署任意静态托管时使用 `sites/beishu-lab/dist`；修改源码后需同步 dist。
+
+线上使用 GitHub Pages，从 `codex/pages` 分支的根目录发布。更新网站时，将最新 dist 同步到该分支并推送。旧 Sites 地址暂留用于用户导出资料；换域名后需在旧站导出 JSON 备份，再到新站导入，浏览器本机数据不会自动迁移。
 
 ## 项目结构
 
